@@ -14,12 +14,11 @@ public class Vision {
     }
 
     private String remainingInput = "";
-    private volatile Color ballColor;
+    private volatile Color ballColor = Color.NONE;
 
     public Vision(StatusCheck enabled) {
         enabledStatus = enabled;
 
-        initializePort();
         thread = createThread();
     }
 
@@ -28,7 +27,9 @@ public class Vision {
     }
 
     public void start() {
-        thread.start();
+        if (!thread.isAlive()) {
+            thread.start();
+        }
     }
 
     public void stop() {
@@ -43,7 +44,7 @@ public class Vision {
     private Thread createThread() {
         return new Thread(() -> {
             while (!initialized && !Thread.interrupted() && enabledStatus.get()) {
-                Timer.delay(2.0);
+                Timer.delay(1.0);
                 initializePort();
             }
 
@@ -52,6 +53,7 @@ public class Vision {
                     parseInput(remainingInput + port.readString());
                 } catch (Exception e) {
                     System.out.println(e.toString());
+                    initializePort();
                 }
                 Timer.delay(0.034);
             }

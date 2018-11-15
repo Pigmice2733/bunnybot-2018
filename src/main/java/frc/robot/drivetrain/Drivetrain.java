@@ -16,7 +16,6 @@ public class Drivetrain {
     }
 
     public void arcadeDrive(double forwardSpeed, double turnSpeed) {
-        leftDrive.set(forwardSpeed + turnSpeed);
-        rightDrive.set(-forwardSpeed + turnSpeed);
+        tankDrive(forwardSpeed + turnSpeed, forwardSpeed - turnSpeed);
     }
 }
