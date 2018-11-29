@@ -21,10 +21,10 @@ public class Robot extends TimedRobot {
         WPI_TalonSRX leftDrive = new WPI_TalonSRX(0);
         WPI_TalonSRX rightDrive = new WPI_TalonSRX(2);
 
-        WPI_TalonSRX leftFollower = new WPI_TalonSRX(1);
+        WPI_VictorSPX leftFollower = new WPI_VictorSPX(1);
         leftFollower.set(ControlMode.Follower, leftDrive.getDeviceID());
 
-        WPI_TalonSRX rightFollower = new WPI_TalonSRX(3);
+        WPI_VictorSPX rightFollower = new WPI_VictorSPX(3);
         rightFollower.set(ControlMode.Follower, rightDrive.getDeviceID());
 
         drivetrain = new Drivetrain(leftDrive, rightDrive);
