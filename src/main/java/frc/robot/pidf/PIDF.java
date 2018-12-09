@@ -32,7 +32,8 @@ public class PIDF {
 
     /**
      * Set this to true when your setpoint is not continuous
-     * This will switch from using derivative of the error to derivative of the input
+     * This will switch from using derivative of the error to derivative of the
+     * input
      */
     public void setDerivativeOnInput(boolean on) {
         this.useDerivativeOnInput = on;

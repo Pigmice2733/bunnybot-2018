@@ -1,9 +1,10 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 public class BallSorter {
-    private WPI_VictorSPX sortMotor, feedMotor;
+    private VictorSPX sortMotor, feedMotor;
 
     private static double feedSpeed = -0.4;
     private static double sortSpeed = 0.12;
@@ -12,21 +13,21 @@ public class BallSorter {
         LEFT, RIGHT, STOP,
     }
 
-    public BallSorter(WPI_VictorSPX sortMotor, WPI_VictorSPX feedMotor) {
+    public BallSorter(VictorSPX sortMotor, VictorSPX feedMotor) {
         this.sortMotor = sortMotor;
         this.feedMotor = feedMotor;
     }
 
     public void set(Direction direction) {
-        feedMotor.set(feedSpeed);
+        feedMotor.set(ControlMode.PercentOutput, feedSpeed);
         switch (direction) {
         case LEFT:
-            sortMotor.set(sortSpeed);
+            sortMotor.set(ControlMode.PercentOutput, sortSpeed);
             break;
         case RIGHT:
-            sortMotor.set(-sortSpeed);
+            sortMotor.set(ControlMode.PercentOutput, -sortSpeed);
         default:
-            sortMotor.stopMotor();
+            sortMotor.set(ControlMode.PercentOutput, 0.0);
             break;
         }
     }
