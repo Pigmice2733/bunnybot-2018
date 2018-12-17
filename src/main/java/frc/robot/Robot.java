@@ -10,22 +10,18 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
-import frc.robot.autonomous.IAutonomous;
+import frc.robot.autonomous.Autonomous;
 import frc.robot.autonomous.Test;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.pidf.Gains;
-import frc.robot.subsystems.BallSorter;
 
 public class Robot extends TimedRobot {
     private Drivetrain drivetrain;
-    private BallSorter sorter;
-
-    private Vision vision;
 
     private Joystick joy;
     private AHRS navx;
 
-    private IAutonomous autonomous;
+    private Autonomous autonomous;
 
     public void robotInit() {
         TalonSRX leftDrive = new TalonSRX(0);
@@ -49,35 +45,15 @@ public class Robot extends TimedRobot {
         joy = new Joystick(0);
         navx = new AHRS(SPI.Port.kMXP);
 
-        // VictorSPX sortMotor = new VictorSPX(5);
-        // VictorSPX feedMotor = new VictorSPX(4);
-
-        // sorter = new BallSorter(sortMotor, feedMotor);
-        vision = new Vision(this::isEnabled);
-
         setPeriod(0.02);
     }
 
     public void autonomousInit() {
-        vision.start();
         autonomous = new Test(drivetrain, navx);
         autonomous.initialize();
     }
 
     public void autonomousPeriodic() {
-        Vision.Color ballColor = vision.getBallColor();
-        // switch (ballColor) {
-        // case RED:
-        // sorter.set(BallSorter.Direction.LEFT);
-        // break;
-        // case BLUE:
-        // sorter.set(BallSorter.Direction.RIGHT);
-        // break;
-        // default:
-        // sorter.set(BallSorter.Direction.STOP);
-        // break;
-        // }
-
         autonomous.update();
     }
 
@@ -90,7 +66,6 @@ public class Robot extends TimedRobot {
     }
 
     public void disabledInit() {
-        vision.stop();
     }
 
     private void configureDriveMotor(IMotorControllerEnhanced motor) {
