@@ -1,7 +1,7 @@
 package frc.robot.autonomous;
 
 public interface IAutonomous {
-    public void update();
-
     public void initialize();
+
+    public void update();
 }

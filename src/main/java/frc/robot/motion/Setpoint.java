@@ -63,10 +63,12 @@ public class Setpoint {
     public Setpoint toArcLength(double trackwidth, boolean radians) {
         double ratio;
 
+        double radius = 0.5 * trackwidth;
+
         if (radians) {
-            ratio = 0.5 * trackwidth;
+            ratio = radius;
         } else {
-            ratio = 0.5 * trackwidth * Math.PI / 180.0;
+            ratio = radius * Math.PI / 180.0;
         }
 
         // Position, velocity, and acceleration can be converted with the arc length

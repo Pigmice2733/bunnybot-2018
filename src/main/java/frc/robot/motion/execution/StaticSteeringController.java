@@ -1,12 +1,10 @@
 package frc.robot.motion.execution;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.pidf.PIDF;
 
 public class StaticSteeringController {
-    private AHRS navx;
+    private Input input;
     private PIDF pid;
 
     private double target;
@@ -14,13 +12,17 @@ public class StaticSteeringController {
 
     private double bias;
 
-    public StaticSteeringController(AHRS navx, PIDF pid) {
-        this.navx = navx;
+    public interface Input {
+        double get();
+    }
+
+    public StaticSteeringController(Input input, PIDF pid) {
+        this.input = input;
         this.pid = pid;
     }
 
     public void initialize() {
-        target = navx.getAngle();
+        target = input.get();
         startTime = Timer.getFPGATimestamp();
 
         pid.initialize(0.0, startTime, 0.0);
@@ -30,7 +32,13 @@ public class StaticSteeringController {
 
     // Returning a wheel distance correction to steer to target heading
     public double correct() {
-        double correction = pid.calculateOutput(navx.getAngle(), target, Timer.getFPGATimestamp());
+        return correct(target);
+    }
+
+    // Returning a wheel distance correction to steer to target heading
+    public double correct(double target) {
+        this.target = target;
+        double correction = pid.calculateOutput(input.get(), target, Timer.getFPGATimestamp());
 
         bias += correction;
 

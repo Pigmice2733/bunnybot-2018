@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.autonomous.IAutonomous;
 import frc.robot.autonomous.Test;
-import frc.robot.autonomous.Turn;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.pidf.Gains;
 import frc.robot.subsystems.BallSorter;
@@ -37,6 +36,9 @@ public class Robot extends TimedRobot {
         configureDriveMotor(leftDrive);
         configureDriveMotor(rightDrive);
 
+        leftDrive.setSensorPhase(true);
+        rightDrive.setSensorPhase(true);
+
         VictorSPX leftFollower = new VictorSPX(1);
         configureFollowerMotor(leftFollower, leftDrive);
 
@@ -58,7 +60,7 @@ public class Robot extends TimedRobot {
 
     public void autonomousInit() {
         vision.start();
-        autonomous = new Turn(drivetrain, navx);
+        autonomous = new Test(drivetrain, navx);
         autonomous.initialize();
     }
 
@@ -93,9 +95,9 @@ public class Robot extends TimedRobot {
 
     private void configureDriveMotor(IMotorControllerEnhanced motor) {
         configureVoltageComp(motor);
-        configurePIDMotor(motor, new Gains(0.5, 0.003, 0.0, 0.025, 0.0, 0.0));
+        configurePIDMotor(motor, new Gains(0.4, 0.0015, 0.0004, 0.025, 0.0, 0.0));
         motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
-        motor.setSensorPhase(motor.getInverted());
+        motor.setSelectedSensorPosition(0, 0, 10);
     }
 
     private void configureFollowerMotor(IMotorController follower, IMotorController leader) {

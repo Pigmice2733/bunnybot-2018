@@ -34,10 +34,6 @@ public class Drivetrain {
 
     public void arcadeDrive(double forwardSpeed, double turnSpeed) {
         tankDrive(forwardSpeed + turnSpeed, forwardSpeed - turnSpeed);
-
-        System.out.println(leftDrive.getSelectedSensorPosition(0));
-        System.out.println(rightDrive.getSelectedSensorPosition(0));
-
     }
 
     public void stop() {
