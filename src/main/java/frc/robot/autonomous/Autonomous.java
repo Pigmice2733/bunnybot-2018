@@ -23,7 +23,9 @@ public abstract class Autonomous {
             boolean done = subroutines.get(state).update();
             if (done) {
                 state++;
-                subroutines.get(state).initialize();
+                if (state < subroutines.size()) {
+                    subroutines.get(state).initialize();
+                }
             }
         }
     };

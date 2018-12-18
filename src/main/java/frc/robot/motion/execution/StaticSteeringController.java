@@ -17,17 +17,24 @@ public class StaticSteeringController {
     }
 
     public StaticSteeringController(Input input, PIDF pid) {
+        this(input, pid, 0.0);
+    }
+
+    public StaticSteeringController(Input input, PIDF pid, double target) {
         this.input = input;
         this.pid = pid;
+        this.target = target;
     }
 
     public void initialize() {
-        target = input.get();
         startTime = Timer.getFPGATimestamp();
-
         pid.initialize(0.0, startTime, 0.0);
-
         bias = 0.0;
+    }
+
+    public void initialize(double target) {
+        this.target = target;
+        initialize();
     }
 
     // Returning a wheel distance correction to steer to target heading

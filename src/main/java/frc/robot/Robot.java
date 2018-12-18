@@ -13,10 +13,14 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.autonomous.Autonomous;
 import frc.robot.autonomous.Test;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.utils.Utils;
 import frc.robot.pidf.Gains;
+
+// max speed : 1.165 feet / second
 
 public class Robot extends TimedRobot {
     private Drivetrain drivetrain;
+    private double sensitivity;
 
     private Joystick joy;
     private AHRS navx;
@@ -58,14 +62,19 @@ public class Robot extends TimedRobot {
     }
 
     public void teleopInit() {
-
+        sensitivity = Utils.lerp(joy.getZ(), 1.0, -1.0, 0.5, 1.0);
     }
 
     public void teleopPeriodic() {
-        drivetrain.arcadeDrive(-joy.getY(), joy.getX());
+        double dir = joy.getRawButton(1) ? -1.0 : 1.0;
+        drivetrain.arcadeDrive(scaleControl(-dir * joy.getY(), 2.0), sensitivity * scaleControl(joy.getX(), 2.0));
     }
 
     public void disabledInit() {
+    }
+
+    private double scaleControl(double input, double factor) {
+        return Math.copySign(Math.pow(input, factor), input);
     }
 
     private void configureDriveMotor(IMotorControllerEnhanced motor) {

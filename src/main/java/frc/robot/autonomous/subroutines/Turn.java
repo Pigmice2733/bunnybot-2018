@@ -12,30 +12,47 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.utils.Bounds;
 
 public class Turn implements ISubroutine {
-    private final StaticProfileExecutor executor;
-    private final Drivetrain drive;
-    private boolean finished = false;
-    private double initialAngle;
+    private StaticProfileExecutor executor;
     private final StaticSteeringController steering;
+
     private AHRS navx;
+    private final Drivetrain drive;
+
+    private double angleOffset = 0.0;
+    private double targetAngle = 0.0;
+    private boolean finished = false;
+    private boolean absolute = false;
 
     public Turn(Drivetrain drive, AHRS navx, double degrees) {
+        this(drive, navx, degrees, false);
+    }
+
+    public Turn(Drivetrain drive, AHRS navx, double degrees, boolean absolute) {
         this.drive = drive;
-        StaticProfile profile = new StaticProfile(0.0, 0.0, degrees, 50.0, 45.0, 60.0);
-        executor = new StaticProfileExecutor(profile, this::driveOutput, this::getAngle, 1);
-
         this.navx = navx;
-        initialAngle = navx.getAngle();
+        this.absolute = absolute;
+        this.targetAngle = degrees;
 
-        Gains steeringGains = new Gains(0.00005, 0.00005, 0.0);
+        Gains steeringGains = new Gains(0.00005, 0.00035, 0.0);
         Bounds steeringBounds = new Bounds(-0.2, 0.2);
         PIDF steeringPID = new PIDF(steeringGains, steeringBounds);
         steering = new StaticSteeringController(this::getAngle, steeringPID);
     }
 
     public void initialize() {
+        double initialAngle = 0.0;
+        if (absolute) {
+            initialAngle = targetAngle - getAngle();
+            angleOffset = 0.0;
+        } else {
+            angleOffset = getAngle();
+        }
+
+        StaticProfile profile = new StaticProfile(0.0, initialAngle, targetAngle, 70.0, 60.0, 80.0);
+        executor = new StaticProfileExecutor(profile, this::driveOutput, this::getAngle, 1);
+
         drive.initializePID();
-        steering.initialize();
+        steering.initialize(initialAngle);
         executor.initialize();
         finished = false;
     }
@@ -48,14 +65,14 @@ public class Turn implements ISubroutine {
     }
 
     private double getAngle() {
-        return navx.getAngle() - initialAngle;
+        return -navx.getAngle() - angleOffset;
     }
 
     private void driveOutput(Setpoint sp) {
         sp = sp.toArcLength(drive.getTrackWidth(), false);
 
         double correction = steering.correct(sp.getHeading());
-        sp = new Setpoint(sp.getPosition() + correction, sp.getVelocity(), sp.getAcceleration(), sp.getCurvature(),
+        sp = new Setpoint(sp.getPosition() - correction, sp.getVelocity(), sp.getAcceleration(), sp.getCurvature(),
                 sp.getHeading());
 
         drive.PIDDrive(sp, sp.negate());

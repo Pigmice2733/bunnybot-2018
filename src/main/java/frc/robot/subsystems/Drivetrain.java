@@ -54,4 +54,9 @@ public class Drivetrain {
         double avg = 0.5 * (leftDrive.getSelectedSensorPosition(0) + rightDrive.getSelectedSensorPosition(0));
         return avg / ticksPerFoot;
     }
+
+    public double getSensorVelocity() {
+        double avg = 0.5 * (leftDrive.getSelectedSensorVelocity(0) + rightDrive.getSelectedSensorVelocity(0));
+        return avg / ticksPerFoot;
+    }
 }

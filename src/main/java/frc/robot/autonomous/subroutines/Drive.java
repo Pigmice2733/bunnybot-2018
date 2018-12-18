@@ -16,30 +16,60 @@ public class Drive implements ISubroutine {
     private final StaticProfileExecutor executor;
     private final Drivetrain drive;
     private final StaticSteeringController steering;
-    private boolean finished = false;
     private AHRS navx;
+
+    private boolean finished = false;
+    private boolean absoluteHeading = false;
 
     public Drive(Drivetrain drive, AHRS navx, double feet) {
         this.drive = drive;
         this.navx = navx;
-        StaticProfile profile = new StaticProfile(0.0, 0.0, feet, 5.0, 1.8, 4.5);
+        StaticProfile profile;
+        if (feet > 10) {
+            profile = new StaticProfile(0.0, 0.0, feet, 7.0, 4.0, 4.5);
+        } else {
+            profile = new StaticProfile(0.0, 0.0, feet, 3.0, 1.8, 3.0);
+        }
         executor = new StaticProfileExecutor(profile, this::driveOutput, drive::getSensorPosition, 0.05);
 
-        Gains steeringGains = new Gains(0.00005, 0.0, 0.0);
+        Gains steeringGains = new Gains(0.00008, 0.00002, 0.0);
         Bounds steeringBounds = new Bounds(-0.2, 0.2);
         PIDF steeringPID = new PIDF(steeringGains, steeringBounds);
         steering = new StaticSteeringController(this::getAngle, steeringPID);
     }
 
+    public Drive(Drivetrain drive, AHRS navx, double feet, double targetAngle) {
+        this.drive = drive;
+        this.navx = navx;
+        StaticProfile profile;
+        if (feet > 10) {
+            profile = new StaticProfile(0.0, 0.0, feet, 7.0, 4.0, 4.5);
+        } else {
+            profile = new StaticProfile(0.0, 0.0, feet, 3.0, 1.8, 3.0);
+        }
+        executor = new StaticProfileExecutor(profile, this::driveOutput, drive::getSensorPosition, 0.05);
+
+        absoluteHeading = true;
+
+        Gains steeringGains = new Gains(0.00008, 0.00002, 0.0);
+        Bounds steeringBounds = new Bounds(-0.2, 0.2);
+        PIDF steeringPID = new PIDF(steeringGains, steeringBounds);
+        steering = new StaticSteeringController(this::getAngle, steeringPID, targetAngle);
+    }
+
     public void initialize() {
         drive.initializePID();
-        // steering.initialize();
+        if (!absoluteHeading) {
+            steering.initialize(getAngle());
+        } else {
+            steering.initialize();
+        }
         executor.initialize();
         finished = false;
     }
 
     private double getAngle() {
-        return navx.getAngle();
+        return -navx.getAngle();
     }
 
     public boolean update() {

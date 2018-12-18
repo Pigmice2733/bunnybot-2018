@@ -31,9 +31,8 @@ public class PIDF {
     }
 
     /**
-     * Set this to true when your setpoint is not continuous
-     * This will switch from using derivative of the error to derivative of the
-     * input
+     * Set this to true when your setpoint is not continuous This will switch from
+     * using derivative of the error to derivative of the input
      */
     public void setDerivativeOnInput(boolean on) {
         this.useDerivativeOnInput = on;
@@ -65,6 +64,7 @@ public class PIDF {
         if (continuous) {
             error = calculateContinuousError(error);
         }
+        System.out.println(error);
 
         double deltaTime = time - previousTime;
 
