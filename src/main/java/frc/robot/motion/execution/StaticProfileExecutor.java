@@ -27,15 +27,11 @@ public class StaticProfileExecutor {
     }
 
     public void initialize() {
-        startTime = 0.0;
+        startTime = Timer.getFPGATimestamp();
     }
 
     // Returns true if error is within the allowable error, false otherwise
     public boolean update() {
-        if (startTime == 0.0) {
-            startTime = Timer.getFPGATimestamp();
-        }
-
         double time = Timer.getFPGATimestamp() - startTime;
         Setpoint sp = profile.getSetpoint(time);
         output.set(sp);

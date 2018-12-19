@@ -64,7 +64,6 @@ public class PIDF {
         if (continuous) {
             error = calculateContinuousError(error);
         }
-        System.out.println(error);
 
         double deltaTime = time - previousTime;
 

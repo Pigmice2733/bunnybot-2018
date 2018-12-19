@@ -28,7 +28,7 @@ public class StaticSteeringController {
 
     public void initialize() {
         startTime = Timer.getFPGATimestamp();
-        pid.initialize(0.0, startTime, 0.0);
+        pid.initialize(input.get(), startTime, 0.0);
         bias = 0.0;
     }
 
@@ -45,7 +45,7 @@ public class StaticSteeringController {
     // Returning a wheel distance correction to steer to target heading
     public double correct(double target) {
         this.target = target;
-        double correction = pid.calculateOutput(input.get(), target, Timer.getFPGATimestamp());
+        double correction = pid.calculateOutput(input.get(), target, Timer.getFPGATimestamp() - startTime);
 
         bias += correction;
 

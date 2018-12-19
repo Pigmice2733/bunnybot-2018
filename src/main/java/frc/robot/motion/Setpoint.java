@@ -55,15 +55,12 @@ public class Setpoint {
      * Convert setpoint from being in terms of angle to the arc length distance of
      * the robot's wheels.
      * 
-     * @param trackwidth The width of the robot from wheel to wheel
-     * @param radians    Whether the original position is in radians (or in
-     *                   degrees).
+     * @param radius  The turning radius
+     * @param radians Whether the original position is in radians (or in degrees).
      * @return This setpoint expressed in arc length rather than angle
      */
-    public Setpoint toArcLength(double trackwidth, boolean radians) {
+    public Setpoint toArcLength(double radius, boolean radians) {
         double ratio;
-
-        double radius = 0.5 * trackwidth;
 
         if (radians) {
             ratio = radius;
@@ -74,7 +71,7 @@ public class Setpoint {
         // Position, velocity, and acceleration can be converted with the arc length
         // formula. Curvature is the inverse of radius, heading is the angle (old
         // position).
-        return new Setpoint(position * ratio, velocity * ratio, acceleration * ratio, 2.0 / trackwidth, position);
+        return new Setpoint(position * ratio, velocity * ratio, acceleration * ratio, 1.0 / radius, position);
     }
 
     public Setpoint negate() {

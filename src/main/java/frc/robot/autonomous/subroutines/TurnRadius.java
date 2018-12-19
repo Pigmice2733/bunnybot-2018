@@ -11,7 +11,7 @@ import frc.robot.pidf.PIDF;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.utils.Bounds;
 
-public class Turn implements ISubroutine {
+public class TurnRadius implements ISubroutine {
     private StaticProfileExecutor executor;
     private final StaticSteeringController steering;
 
@@ -20,38 +20,41 @@ public class Turn implements ISubroutine {
 
     private double angleOffset = 0.0;
     private double targetAngle = 0.0;
+    private double radius = 0.0;
     private boolean finished = false;
     private boolean absolute = false;
-    private double initialAngle = 0.0;
 
-    public Turn(Drivetrain drive, AHRS navx, double degrees) {
-        this(drive, navx, degrees, false);
+    public TurnRadius(Drivetrain drive, AHRS navx, double degrees, double radius) {
+        this(drive, navx, degrees, radius, false);
     }
 
-    public Turn(Drivetrain drive, AHRS navx, double degrees, boolean absolute) {
+    public TurnRadius(Drivetrain drive, AHRS navx, double degrees, double radius, boolean absolute) {
         this.drive = drive;
         this.navx = navx;
         this.absolute = absolute;
         this.targetAngle = degrees;
+        this.radius = radius;
 
-        Gains steeringGains = new Gains(0.00005, 0.0001, 0.0);
+        Gains steeringGains = new Gains(0.00005, 0.00035, 0.0);
         Bounds steeringBounds = new Bounds(-0.2, 0.2);
         PIDF steeringPID = new PIDF(steeringGains, steeringBounds);
         steering = new StaticSteeringController(this::getAngle, steeringPID);
     }
 
     public void initialize() {
-        initialAngle = 0.0;
+        double initialAngle = 0.0;
         if (absolute) {
             initialAngle = getAngle();
+            angleOffset = 0.0;
+        } else {
+            angleOffset = getAngle();
         }
-        angleOffset = getAngle();
 
-        StaticProfile profile = new StaticProfile(0.0, 0.0, targetAngle - initialAngle, 40.0, 60.0, 60.0);
+        StaticProfile profile = new StaticProfile(0.0, initialAngle, targetAngle, 70.0, 60.0, 80.0);
         executor = new StaticProfileExecutor(profile, this::driveOutput, this::getAngle, 1);
 
         drive.initializePID();
-        steering.initialize(0.0);
+        steering.initialize(initialAngle);
         executor.initialize();
         finished = false;
     }
@@ -68,12 +71,15 @@ public class Turn implements ISubroutine {
     }
 
     private void driveOutput(Setpoint sp) {
-        sp = sp.toArcLength(0.5 * drive.getTrackWidth(), false);
+        Setpoint left = sp.toArcLength(radius + 0.5 * drive.getTrackWidth(), false);
+        Setpoint right = sp.toArcLength(radius - 0.5 * drive.getTrackWidth(), false);
 
         double correction = steering.correct(sp.getHeading());
-        sp = new Setpoint(sp.getPosition() + correction, sp.getVelocity(), sp.getAcceleration(), sp.getCurvature(),
-                sp.getHeading());
+        left = new Setpoint(left.getPosition() - correction, left.getVelocity(), left.getAcceleration(),
+                left.getCurvature(), left.getHeading());
+        right = new Setpoint(right.getPosition() - correction, right.getVelocity(), right.getAcceleration(),
+                right.getCurvature(), right.getHeading());
 
-        drive.PIDDrive(sp.negate(false), sp);
+        drive.PIDDrive(left, right);
     }
 }

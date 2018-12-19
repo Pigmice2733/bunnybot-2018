@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.autonomous.Autonomous;
+import frc.robot.autonomous.Radius;
 import frc.robot.autonomous.Test;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.utils.Utils;
