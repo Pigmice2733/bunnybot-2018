@@ -26,9 +26,9 @@ public class Drive implements ISubroutine {
         this.navx = navx;
         StaticProfile profile;
         if (feet > 10) {
-            profile = new StaticProfile(0.0, 0.0, feet, 7.0, 4.0, 4.5);
+            profile = new StaticProfile(0.0, 0.0, feet, 5.0, 6.5, 5.5);
         } else {
-            profile = new StaticProfile(0.0, 0.0, feet, 3.0, 1.8, 3.0);
+            profile = new StaticProfile(0.0, 0.0, feet, 6.0, 4.0, 3.0);
         }
         executor = new StaticProfileExecutor(profile, this::driveOutput, drive::getSensorPosition, 0.05);
 
@@ -43,9 +43,9 @@ public class Drive implements ISubroutine {
         this.navx = navx;
         StaticProfile profile;
         if (feet > 10) {
-            profile = new StaticProfile(0.0, 0.0, feet, 7.0, 4.0, 4.5);
+            profile = new StaticProfile(0.0, 0.0, feet, 5.0, 6.5, 5.5);
         } else {
-            profile = new StaticProfile(0.0, 0.0, feet, 3.0, 1.8, 3.0);
+            profile = new StaticProfile(0.0, 0.0, feet, 6.0, 4.0, 3.0);
         }
         executor = new StaticProfileExecutor(profile, this::driveOutput, drive::getSensorPosition, 0.05);
 

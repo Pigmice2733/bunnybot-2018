@@ -23,8 +23,8 @@ public class Drivetrain {
     }
 
     public void initializePID() {
-        leftDrive.setSelectedSensorPosition(0, 0, 10);
-        rightDrive.setSelectedSensorPosition(0, 0, 10);
+        leftDrive.setSelectedSensorPosition(0, 0, 100);
+        rightDrive.setSelectedSensorPosition(0, 0, 100);
     }
 
     public void tankDrive(double leftSpeed, double rightSpeed) {

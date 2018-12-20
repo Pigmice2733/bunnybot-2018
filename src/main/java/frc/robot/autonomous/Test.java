@@ -11,16 +11,19 @@ import frc.robot.autonomous.subroutines.Turn;
 
 public class Test extends Autonomous {
     private AHRS navx;
+    private Drivetrain drive;
 
     public Test(Drivetrain drive, AHRS navx) {
         this.navx = navx;
+        this.drive = drive;
         this.subroutines = Arrays.asList(new Drive(drive, navx, 20.0, 0.0), new Turn(drive, navx, -90.0, true),
-                new Drive(drive, navx, 10.0, -90.0), new Turn(drive, navx, -180.0, true),
-                new Drive(drive, navx, 10.0, -180.0), new Turn(drive, navx, -270.0, true),
-                new Turn(drive, navx, -90.0, true), new Turn(drive, navx, 0.0, true));
+                new Drive(drive, navx, 7.0, -90.0), new Turn(drive, navx, -180.0, true),
+                new Drive(drive, navx, 15.0, -180.0));
     }
 
     public void initialize() {
+        System.out.println("Hey Caleb");
+        drive.initializePID();
         navx.setAngleAdjustment(-navx.getAngle());
     }
 }

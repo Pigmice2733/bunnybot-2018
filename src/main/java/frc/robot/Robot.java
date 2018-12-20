@@ -60,6 +60,7 @@ public class Robot extends TimedRobot {
 
     public void autonomousPeriodic() {
         autonomous.update();
+        System.out.println("L: " + drivetrain.getLeftSensorPosition() + "  R: " + drivetrain.getRightSensorPosition());
     }
 
     public void teleopInit() {
@@ -68,7 +69,7 @@ public class Robot extends TimedRobot {
 
     public void teleopPeriodic() {
         double dir = joy.getRawButton(1) ? -1.0 : 1.0;
-        drivetrain.arcadeDrive(scaleControl(-dir * joy.getY(), 2.0), sensitivity * scaleControl(joy.getX(), 2.0));
+        drivetrain.arcadeDrive(scaleControl(-dir * joy.getY(), 3.0), sensitivity * scaleControl(joy.getX(), 3.0));
     }
 
     public void disabledInit() {
