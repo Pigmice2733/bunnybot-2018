@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -24,13 +25,17 @@ public class Robot extends TimedRobot {
     private double sensitivity;
 
     private Joystick joy;
+    private Joystick operatorJoy;
     private AHRS navx;
+
+    private TalonSRX intake;
 
     private Autonomous autonomous;
 
     public void robotInit() {
         TalonSRX leftDrive = new TalonSRX(0);
         TalonSRX rightDrive = new TalonSRX(2);
+        intake = new TalonSRX(4);
 
         rightDrive.setInverted(true);
 
@@ -48,6 +53,7 @@ public class Robot extends TimedRobot {
 
         drivetrain = new Drivetrain(leftDrive, rightDrive, 3.0);
         joy = new Joystick(0);
+        operatorJoy = new Joystick(1);
         navx = new AHRS(SPI.Port.kMXP);
 
         setPeriod(0.02);
@@ -70,6 +76,11 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         double dir = joy.getRawButton(1) ? -1.0 : 1.0;
         drivetrain.arcadeDrive(scaleControl(-dir * joy.getY(), 3.0), sensitivity * scaleControl(joy.getX(), 3.0));
+        if (operatorJoy.getRawButton(3)) {
+            intake.set(ControlMode.PercentOutput, 1);
+        } else {
+            intake.set(ControlMode.PercentOutput, 0);
+        }
     }
 
     public void disabledInit() {

@@ -34,7 +34,7 @@ public class Turn implements ISubroutine {
         this.absolute = absolute;
         this.targetAngle = degrees;
 
-        Gains steeringGains = new Gains(0.0008, 0.0007, 0.0);
+        Gains steeringGains = new Gains(0.002, 0.00008, 0.0001);
         Bounds steeringBounds = new Bounds(-0.2, 0.2);
         PIDF steeringPID = new PIDF(steeringGains, steeringBounds);
         steering = new StaticSteeringController(this::getAngle, steeringPID);
