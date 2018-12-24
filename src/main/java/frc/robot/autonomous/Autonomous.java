@@ -11,7 +11,7 @@ public abstract class Autonomous {
 
     public abstract void initialize();
 
-    public void update() {
+    public int update() {
         // Initialize first state
         if (state < 0) {
             state = 0;
@@ -28,5 +28,6 @@ public abstract class Autonomous {
                 }
             }
         }
+        return state;
     };
 }

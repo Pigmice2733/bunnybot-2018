@@ -29,13 +29,20 @@ public class Robot extends TimedRobot {
     private AHRS navx;
 
     private TalonSRX intake;
+    private TalonSRX outtake;
 
     private Autonomous autonomous;
+
+    private final double autoOuttakeSpeed = 0.5;
+    // 0.0 - 1.0, 0.0 never, 1.0 always
+    private final double autoOuttakeInterval = 0.4;
+    private final double autoOuttakeOffsetDistance = 5.5; // feet
 
     public void robotInit() {
         TalonSRX leftDrive = new TalonSRX(0);
         TalonSRX rightDrive = new TalonSRX(2);
         intake = new TalonSRX(4);
+        outtake = new TalonSRX(5);
 
         rightDrive.setInverted(true);
 
@@ -65,8 +72,16 @@ public class Robot extends TimedRobot {
     }
 
     public void autonomousPeriodic() {
-        autonomous.update();
-        System.out.println("L: " + drivetrain.getLeftSensorPosition() + "  R: " + drivetrain.getRightSensorPosition());
+        final int state = autonomous.update();
+        intake.set(ControlMode.PercentOutput, -1);
+        final double distance = (Math.abs(drivetrain.getLeftSensorPosition())
+                + Math.abs(drivetrain.getRightSensorPosition())) / 2;
+
+        System.out.println(distance);
+
+        if (state >= 4 && distance > autoOuttakeOffsetDistance && distance % 1 > autoOuttakeInterval) {
+            outtake.set(ControlMode.PercentOutput, autoOuttakeSpeed);
+        }
     }
 
     public void teleopInit() {
@@ -77,9 +92,14 @@ public class Robot extends TimedRobot {
         double dir = joy.getRawButton(1) ? -1.0 : 1.0;
         drivetrain.arcadeDrive(scaleControl(-dir * joy.getY(), 3.0), sensitivity * scaleControl(joy.getX(), 3.0));
         if (operatorJoy.getRawButton(3)) {
-            intake.set(ControlMode.PercentOutput, 1);
+            intake.set(ControlMode.PercentOutput, -1);
         } else {
             intake.set(ControlMode.PercentOutput, 0);
+        }
+        if (operatorJoy.getRawButton(2)) {
+            outtake.set(ControlMode.PercentOutput, 0.5);
+        } else {
+            outtake.set(ControlMode.PercentOutput, 0);
         }
     }
 

@@ -32,7 +32,7 @@ public class Drive implements ISubroutine {
         }
         executor = new StaticProfileExecutor(profile, this::driveOutput, drive::getSensorPosition, 0.05);
 
-        Gains steeringGains = new Gains(0.0015, 0.00004, 0.0);
+        Gains steeringGains = new Gains(0.0016, 0.00005, 0.0);
         Bounds steeringBounds = new Bounds(-0.2, 0.2);
         PIDF steeringPID = new PIDF(steeringGains, steeringBounds);
         steering = new StaticSteeringController(this::getAngle, steeringPID);

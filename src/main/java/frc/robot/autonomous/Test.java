@@ -16,13 +16,12 @@ public class Test extends Autonomous {
     public Test(Drivetrain drive, AHRS navx) {
         this.navx = navx;
         this.drive = drive;
-        this.subroutines = Arrays.asList(new Drive(drive, navx, 20.0, 0.0), new Turn(drive, navx, -90.0, true),
-                new Drive(drive, navx, 7.0, -90.0), new Turn(drive, navx, -180.0, true),
-                new Drive(drive, navx, 15.0, -180.0));
+        this.subroutines = Arrays.asList(new Drive(drive, navx, 20.0, 0.0), new Turn(drive, navx, 90.0, true),
+                new Drive(drive, navx, 6.3, 90.0), new Turn(drive, navx, 180.0, true),
+                new Drive(drive, navx, 18.0, 180.0));
     }
 
     public void initialize() {
-        System.out.println("Hey Caleb");
         drive.initializePID();
         navx.setAngleAdjustment(-navx.getAngle());
     }

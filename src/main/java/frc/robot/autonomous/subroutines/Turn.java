@@ -34,8 +34,8 @@ public class Turn implements ISubroutine {
         this.absolute = absolute;
         this.targetAngle = degrees;
 
-        Gains steeringGains = new Gains(0.002, 0.00008, 0.0001);
-        Bounds steeringBounds = new Bounds(-0.2, 0.2);
+        Gains steeringGains = new Gains(0.002, 0.00015, 0.0001);
+        Bounds steeringBounds = new Bounds(-0.3, 0.3);
         PIDF steeringPID = new PIDF(steeringGains, steeringBounds);
         steering = new StaticSteeringController(this::getAngle, steeringPID);
     }
@@ -47,7 +47,7 @@ public class Turn implements ISubroutine {
         }
         angleOffset = getAngle();
 
-        StaticProfile profile = new StaticProfile(0.0, 0.0, targetAngle - initialAngle, 360.0, 300.0, 160.0);
+        StaticProfile profile = new StaticProfile(0.0, 0.0, targetAngle - initialAngle, 360.0, 300.0, 120.0);
         executor = new StaticProfileExecutor(profile, this::driveOutput, this::getAngle, 1);
 
         drive.initializePID();
